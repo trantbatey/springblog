@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>Hello</title>
-<!--    <div th:replace="partials/links :: linkpage"></div>-->
-    <link rel="stylesheet" href="/resources/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/resources/css/general.css"/>
+        <div th:replace="partials/links :: linkpage"></div>
 </head>
 <body>
-<div class="top_banner">My Blog Site</div>
-<div th:replace="partials/top_banner :: top_banner"></div>
-<div th:replace="partials/navbar :: standard_nav"></div>
+    <div th:replace="partials/navbar :: standard_nav"></div>
+<div class="container">
+    <div th:replace="partials/top_banner :: top_banner"></div>
 
-<h1>Hello, <span th:text="${name}">World</span>!</h1>
-
+    <h1>Hello, <span th:text="${name}">World</span>!</h1>
+</div>
 </body>
-<!--<div th:replace="partials/scripts :: scriptpage"></div>-->
-<script type = "text/javascript" src="/resources/js/bootstrap.min.js"/>
+<div th:replace="partials/scripts :: scriptpage"></div>
+<!--<script type="text/javascript" th:src="@{static/js/bootstrap.min.js}"/>-->
 </html>
