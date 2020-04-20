@@ -1,55 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Hello</title>
-    <div th:replace="partials/links :: linkpage"></div>
-</head>
+<head th:replace="partials/links :: linkpage"/>
 <body>
-
-
-<!-- standard navbar -->
-<nav class="navbar navbar-default">
-
-    <!-- container to give the navbar some padding -->
-    <div class="container">
-
-        <!-- navbar hamburger -->
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                data-target="#bs-nav-demo" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-
-        <!-- navbar brand -->
-        <div class="navbar-header">
-            <a href="#" class="navbar-brand">Codeup</a>
-        </div>
-
-        <!-- collapsing navbar elements -->
-        <div class="collapse navbar-collapse" id="bs-nav-demo">
-
-            <!-- left side content -->
-            <ul class="nav navbar-nav">
-                <li><a href="/home">Home</a></li>
-                <li><a href="/hello/friend">hello</a></li>
-            </ul>
-
-            <!-- right side side content -->
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="/home">Sign Up</a></li>
-                <li><a href="/hello/friend">Login</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<div th:replace="partials/top_banner :: top_banner"></div>
+<div th:replace="partials/navbar :: standard_nav"></div>
 <div class="container">
-    <div th:replace="partials/top_banner :: top_banner"></div>
-
     <h1>Hello, <span th:text="${name}">World</span>!</h1>
 </div>
+<div th:replace="partials/footer_nav :: footer_nav"></div>
 <div th:replace="partials/scripts :: scriptpage"></div>
 </body>
 </html>

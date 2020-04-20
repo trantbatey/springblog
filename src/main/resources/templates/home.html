@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Home</title>
-</head>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="partials/links :: linkpage"/>
 <body>
-
-<h1>This is the home page</h1>
+<div th:replace="partials/top_banner :: top_banner"></div>
+<div th:replace="partials/navbar :: standard_nav"></div>
+<div class="container">
+    <h1>This is the home page</h1>
+</div>
+<div th:replace="partials/footer_nav :: footer_nav"></div>
+<div th:replace="partials/scripts :: scriptpage"></div>
 
 </body>
 </html>
