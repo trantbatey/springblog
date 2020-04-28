@@ -4,10 +4,8 @@ import com.codeup.springblog.models.Post;
 import com.codeup.springblog.models.PostRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +36,19 @@ public class PostController {
     }
 
     @GetMapping("/posts/create")
-    @ResponseBody
     public String showFormForCreatingAPost() {
-        return "view the form for creating a post";
+        return "/posts/create";
     }
 
     @PostMapping("/posts/create")
-    @ResponseBody
-    public String createAPost() {
-        return "create a new post";
+    public RedirectView createAPost(@RequestParam(name = "title") String title,
+                              @RequestParam(name = "body") String body, Model model) {
+        Post aPost = new Post();
+        if (title != null && body != null) {
+            aPost.setTitle(title);
+            aPost.setBody(body);
+            postDao.save(aPost);
+        }
+        return new RedirectView("/posts");
     }
 }
