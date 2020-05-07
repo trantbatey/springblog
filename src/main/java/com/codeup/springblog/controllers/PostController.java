@@ -11,6 +11,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class PostController {
@@ -29,17 +30,15 @@ public class PostController {
     }
 
     @GetMapping("/posts/{id}")
-    public String showAnIndividualPost(@PathVariable int id, Model model) {
-        List<Post> postList = new ArrayList<>();
-        Post post = new Post();
-        post.setTitle("Texas plans reopening");
-        post.setBody("Texas Governor Greg Abbott speaks to the press in Austin on March 29, 2020. On Monday, Abbott " +
-                "outline the second phase of reopening businesses in Texas.");
-        User user = new User();
-        user.setUsername("Trant");
-        user.setEmail("trant@codeup.com");
-        post.setUser(user);
+    public String showAnIndividualPost(@PathVariable long id, Model model) {
+        Post post = null;
+        String errorMessage = "There is no post for ID# " + id + ".";
+        Optional<Post> optionalPost = postDao.findById(id);
+        if (optionalPost.isPresent()) {
+            post = optionalPost.get();
+        }
         model.addAttribute("post", post);
+        model.addAttribute("errMesg", errorMessage);
         return "posts/show";
     }
 
@@ -55,6 +54,8 @@ public class PostController {
         if (title != null && body != null) {
             post.setTitle(title);
             post.setBody(body);
+            User user = userDao.findById(1l).get();
+            post.setUser(user);
             postDao.save(post);
         }
         return new RedirectView("/posts");
