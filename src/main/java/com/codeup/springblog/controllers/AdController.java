@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class AdController {
@@ -30,8 +31,8 @@ public class AdController {
     }
 
     @PostMapping("/ads/create")
-    public String create(@ModelAttribute Ad ad) {
+    public RedirectView create(@ModelAttribute Ad ad) {
         adDao.save(ad);
-        return "ads/index";
+        return new RedirectView("/ads");
     }
 }
