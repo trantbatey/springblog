@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Post</title>
+    <title>Post</title>
     <link th:replace="partials/links :: linkpage"/>
 </head>
 <body>
@@ -10,9 +10,10 @@
 <div th:replace="partials/navbar :: standard_nav"></div>
 
 <div class="container">
-    <h2>Add Post</h2>
+    <h2>Edit Post</h2>
 
-    <form th:action="@{/posts/create}" th:method="post" th:object="${post}">
+    <form th:action="@{/posts/edit}" th:method="post" th:object="${post}">
+        <input type="hidden" th:field="*{id}" class="field"/>
         <input type="hidden" th:field="*{user}" class="field"/>
         <label for="title">Post Title: </label>
         <input type="text" th:field="*{title}" id="title" class="field"/>

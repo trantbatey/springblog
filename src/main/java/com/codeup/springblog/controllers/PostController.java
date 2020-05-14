@@ -1,9 +1,6 @@
 package com.codeup.springblog.controllers;
 
-import com.codeup.springblog.models.Post;
-import com.codeup.springblog.models.PostRepository;
-import com.codeup.springblog.models.User;
-import com.codeup.springblog.models.UserRepository;
+import com.codeup.springblog.models.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,21 +40,53 @@ public class PostController {
     }
 
     @GetMapping("/posts/create")
-    public String showFormForCreatingAPost() {
+    public String showFormForCreatingAPost(Model model) {
+        User user = null;
+        Optional<User> optionalUser = userDao.findById(1L);
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+        }
+        Post post = new Post();
+        post.setUser(user);
+        model.addAttribute("post", post);
         return "/posts/create";
     }
 
-    @PostMapping("/posts/create")
-    public RedirectView createAPost(@RequestParam(name = "title") String title,
-                              @RequestParam(name = "body") String body, Model model) {
-        Post post = new Post();
-        if (title != null && body != null) {
-            post.setTitle(title);
-            post.setBody(body);
-            User user = userDao.findById(1l).get();
-            post.setUser(user);
-            postDao.save(post);
+    @GetMapping("/posts/editcreate")
+    public String editCreatePost(Model model) {
+        User user = null;
+        Optional<User> optionalUser = userDao.findById(1L);
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
         }
-        return new RedirectView("/posts");
+        Post post = new Post();
+        post.setUser(user);
+        model.addAttribute("post", post);
+        return "/posts/edit";
+    }
+
+    @PostMapping("/posts/create")
+    public RedirectView createAPost(@ModelAttribute Post post) {
+        postDao.save(post);
+        return new RedirectView("/posts/" + post.getId());
+    }
+
+    @GetMapping("/posts/{id}/edit")
+    public String showFormForEditingAPost(@PathVariable long id, Model model) {
+        Post post = null;
+        Optional<Post> optionalPost = postDao.findById(id);
+        if (optionalPost.isPresent()) {
+            post = optionalPost.get();
+        } else {
+            post = new Post();
+        }
+        model.addAttribute("post", post);
+        return "/posts/edit";
+    }
+
+    @PostMapping("/posts/edit")
+    public RedirectView editAPost(@ModelAttribute Post post) {
+        postDao.save(post);
+        return new RedirectView("/posts/" + post.getId());
     }
 }
