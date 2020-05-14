@@ -54,7 +54,11 @@ public class PostController {
         if (title != null && body != null) {
             post.setTitle(title);
             post.setBody(body);
-            User user = userDao.findById(1l).get();
+            User user = null;
+            Optional<User> usr = userDao.findById(1l);
+            if (usr != null) {
+                user = usr.get();
+            }
             post.setUser(user);
             postDao.save(post);
         }
