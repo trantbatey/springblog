@@ -13,12 +13,20 @@ public class Post {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String body;
 
     @ManyToOne
     @JoinColumn (name = "user_id", nullable = false)
     private User user;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
