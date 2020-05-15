@@ -9,10 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @Controller
 public class PostController {
     private final PostRepository postDao;
@@ -31,12 +27,8 @@ public class PostController {
 
     @GetMapping("/posts/{id}")
     public String showAnIndividualPost(@PathVariable long id, Model model) {
-        Post post = null;
+        Post post = postDao.getOne(id);
         String errorMessage = "There is no post for ID# " + id + ".";
-        Optional<Post> optionalPost = postDao.findById(id);
-        if (optionalPost.isPresent()) {
-            post = optionalPost.get();
-        }
         model.addAttribute("post", post);
         model.addAttribute("errMesg", errorMessage);
         return "posts/show";
@@ -54,7 +46,7 @@ public class PostController {
         if (title != null && body != null) {
             post.setTitle(title);
             post.setBody(body);
-            User user = userDao.findById(1l).get();
+            User user = userDao.getOne(1l);
             post.setUser(user);
             postDao.save(post);
         }
