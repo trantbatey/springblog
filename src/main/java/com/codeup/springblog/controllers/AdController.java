@@ -35,11 +35,7 @@ public class AdController {
     public String showCreateForm(Model model) {
         // set user, usually done by using session
         Ad ad = new Ad();
-        User user = null;
-        Optional<User> usr = userDao.findById(1l);
-        if (usr != null) {
-            user = usr.get();
-        }
+        User user = userDao.getOne(1l);
         ad.setOwner(user);
         model.addAttribute("ad", ad);
         return "ads/create";
