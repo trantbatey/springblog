@@ -9,10 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @Controller
 public class PostController {
     private final PostRepository postDao;
@@ -31,12 +27,8 @@ public class PostController {
 
     @GetMapping("/posts/{id}")
     public String showAnIndividualPost(@PathVariable long id, Model model) {
-        Post post = null;
+        Post post = postDao.getOne(id);
         String errorMessage = "There is no post for ID# " + id + ".";
-        Optional<Post> optionalPost = postDao.findById(id);
-        if (optionalPost.isPresent()) {
-            post = optionalPost.get();
-        }
         model.addAttribute("post", post);
         model.addAttribute("errMesg", errorMessage);
         return "posts/show";
@@ -44,12 +36,8 @@ public class PostController {
 
     @GetMapping("/posts/create")
     public String showFormForCreatingAPost(Model model) {
-        User user = null;
-        Optional<User> optionalUser = userDao.findById(1L);
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-        }
         Post post = new Post();
+        User user = userDao.getOne(1L);
         post.setUser(user);
         model.addAttribute("post", post);
         return "/posts/create";
@@ -57,11 +45,7 @@ public class PostController {
 
     @GetMapping("/posts/editcreate")
     public String editCreatePost(Model model) {
-        User user = null;
-        Optional<User> optionalUser = userDao.findById(1L);
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-        }
+        User user = userDao.getOne(1L);
         Post post = new Post();
         post.setUser(user);
         model.addAttribute("post", post);
@@ -76,13 +60,7 @@ public class PostController {
 
     @GetMapping("/posts/{id}/edit")
     public String showFormForEditingAPost(@PathVariable long id, Model model) {
-        Post post = null;
-        Optional<Post> optionalPost = postDao.findById(id);
-        if (optionalPost.isPresent()) {
-            post = optionalPost.get();
-        } else {
-            post = new Post();
-        }
+        Post post = postDao.getOne(id);
         model.addAttribute("post", post);
         return "/posts/edit";
     }

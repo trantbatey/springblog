@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Optional;
@@ -35,11 +34,7 @@ public class AdController {
     public String showCreateForm(Model model) {
         // set user, usually done by using session
         Ad ad = new Ad();
-        User user = null;
-        Optional<User> usr = userDao.findById(1l);
-        if (usr != null) {
-            user = usr.get();
-        }
+        User user = userDao.getOne(1L);
         ad.setOwner(user);
         model.addAttribute("ad", ad);
         return "ads/create";
