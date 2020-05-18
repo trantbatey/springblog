@@ -10,9 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.view.RedirectView;
-
-import java.util.Optional;
 
 @Controller
 public class AdController {
@@ -39,7 +36,7 @@ public class AdController {
         // set user, usually done by using session
         Ad ad = new Ad();
         User user = userDao.getOne(1L);
-        ad.setOwner(user);
+        ad.setUser(user);
         model.addAttribute("ad", ad);
         return "ads/create";
     }

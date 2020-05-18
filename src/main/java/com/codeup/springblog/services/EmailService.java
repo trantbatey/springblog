@@ -20,10 +20,10 @@ public class EmailService {
         this.emailSender = emailSender;
     }
 
-    public void prepareAndSend(Ad ad, String subject, String body) {
+    public void prepareAndSend(Notifier notifier, String subject, String body) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(from);
-        msg.setTo(ad.getOwner().getEmail());
+        msg.setTo(notifier.getUser().getEmail());
         msg.setSubject(subject);
         msg.setText(body);
 

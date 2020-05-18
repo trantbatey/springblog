@@ -1,11 +1,13 @@
 package com.codeup.springblog.models;
 
+import com.codeup.springblog.services.Notifier;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name="ads")
-public class Ad {
+public class Ad implements Notifier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +20,7 @@ public class Ad {
     private String description;
 
     @OneToOne
-    private User owner;
+    private User user;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ad")
     private List<AdImage> images;
@@ -55,11 +57,11 @@ public class Ad {
         this.description = description;
     }
 
-    public User getOwner() {
-        return owner;
+    public User getUser() {
+        return user;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setUser(User owner) {
+        this.user = owner;
     }
 }

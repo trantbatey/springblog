@@ -1,10 +1,12 @@
 package com.codeup.springblog.models;
 
+import com.codeup.springblog.services.Notifier;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "posts")
-public class Post {
+public class Post implements Notifier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

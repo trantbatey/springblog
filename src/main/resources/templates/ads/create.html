@@ -13,7 +13,7 @@
     <h2>Create Ad</h2>
 
     <form th:action="@{/ads/create}" th:method="post" th:object="${ad}">
-        <input type="hidden" th:field="*{owner}" class="field"/>
+        <input type="hidden" th:field="*{user}" class="field"/>
         <label for="title">Title: </label>
         <input type="text" th:field="*{title}" id="title" class="field"/>
         <br><br>
