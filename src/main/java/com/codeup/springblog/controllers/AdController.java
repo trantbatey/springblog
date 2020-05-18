@@ -4,6 +4,7 @@ import com.codeup.springblog.models.Ad;
 import com.codeup.springblog.models.AdRepository;
 import com.codeup.springblog.models.User;
 import com.codeup.springblog.models.UserRepository;
+import com.codeup.springblog.services.EmailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +18,14 @@ import java.util.Optional;
 public class AdController {
     private final AdRepository adDao;
     private final UserRepository userDao;
+    private final EmailService emailService;
 
     public AdController(AdRepository adDao,
-                        UserRepository userDao) {
+                        UserRepository userDao,
+                        EmailService emailService) {
         this.adDao = adDao;
         this.userDao = userDao;
+        this.emailService = emailService;
     }
 
     @GetMapping("/ads")
@@ -41,8 +45,11 @@ public class AdController {
     }
 
     @PostMapping("/ads/create")
-    public RedirectView create(@ModelAttribute Ad ad) {
+    public String create(@ModelAttribute Ad ad) {
         adDao.save(ad);
-        return new RedirectView("/ads");
+        emailService.prepareAndSend(ad, "CREATED Ad: " + ad.getTitle(),
+                ad.getTitle() +"\n\n" +
+                        ad.getDescription());
+        return "redirect:/ads";
     }
 }
