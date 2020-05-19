@@ -41,6 +41,30 @@ public class Ad implements Notifier {
         this.description = description;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public List<AdImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<AdImage> images) {
+        this.images = images;
+    }
+
+    public List<AdCategory> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<AdCategory> categories) {
+        this.categories = categories;
+    }
+
     public String getTitle() {
         return title;
     }
