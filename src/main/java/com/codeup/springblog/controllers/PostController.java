@@ -64,12 +64,18 @@ public class PostController {
     }
 
     @PostMapping("/posts/create")
-    public RedirectView createAPost(@ModelAttribute Post post) {
+    public String createAPost(@ModelAttribute Post post) {
+        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (obj == null || !(obj instanceof UserDetails)) {
+            return "redirect:/login";
+        }
+        User user = (User) obj;
+        post.setUser(user);
         postDao.save(post);
         emailService.prepareAndSend(post, "CREATED Post: " + post.getTitle(),
                 post.getTitle() +"\n\n" +
                         post.getBody());
-        return new RedirectView("/posts/" + post.getId());
+        return "redirect:/posts/" + post.getId();
     }
 
     @GetMapping("/posts/{id}/edit")
@@ -87,12 +93,26 @@ public class PostController {
         return "/posts/edit";
     }
 
-    @PostMapping("/posts/edit")
-    public RedirectView editAPost(@ModelAttribute Post post) {
+    @PostMapping("/posts/{id}/edit")
+    public String editAPost(@PathVariable long id, @ModelAttribute Post post) {
+        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (obj == null || !(obj instanceof UserDetails)) {
+            return "redirect:/login";
+        }
+        User user = (User) obj;
+        post.setId(id);
+        post.setUser(user);
         postDao.save(post);
         emailService.prepareAndSend(post, "EDITED post: " + post.getTitle(),
                 post.getTitle() +"\n\n" +
                         post.getBody());
-        return new RedirectView("/posts/" + post.getId());
+        return "redirect:/posts/" + post.getId();
+    }
+
+    @PostMapping("/posts/{id}/delete")
+    public String deleteAd(@PathVariable long id, Model model) {
+        System.out.println(id);
+        postDao.deleteById(id);
+        return "redirect:/posts";
     }
 }
