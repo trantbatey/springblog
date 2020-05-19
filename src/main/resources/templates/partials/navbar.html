@@ -5,7 +5,7 @@
     <nav class="navbar navbar-default">
 
         <!-- container to give the navbar some padding -->
-        <div class="container">
+        <div>
 
             <!-- navbar hamburger -->
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -37,8 +37,13 @@
 
                 <!-- right side side content -->
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/sign-up">Sign Up</a></li>
                     <li><a href="/login">Login</a></li>
+                    <li>
+                        <form th:action="@{/logout}" th:method="post">
+                            <button class="btn-link btn-anchor">Logout</button>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>
