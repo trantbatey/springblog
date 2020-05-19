@@ -3,8 +3,9 @@ package com.codeup.springblog.controllers;
 import com.codeup.springblog.models.Post;
 import com.codeup.springblog.models.PostRepository;
 import com.codeup.springblog.models.User;
-import com.codeup.springblog.models.UserRepository;
 import com.codeup.springblog.services.EmailService;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,14 +14,11 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class PostController {
     private final PostRepository postDao;
-    private final UserRepository userDao;
     private final EmailService emailService;
 
     public PostController(PostRepository postDao,
-                          UserRepository userDao,
                           EmailService emailService) {
         this.postDao = postDao;
-        this.userDao = userDao;
         this.emailService = emailService;
     }
 
@@ -41,8 +39,12 @@ public class PostController {
 
     @GetMapping("/posts/create")
     public String showFormForCreatingAPost(Model model) {
+        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (obj == null || !(obj instanceof UserDetails)) {
+            return "redirect:/login";
+        }
+        User user = (User) obj;
         Post post = new Post();
-        User user = userDao.getOne(1L);
         post.setUser(user);
         model.addAttribute("post", post);
         return "/posts/create";
@@ -50,7 +52,11 @@ public class PostController {
 
     @GetMapping("/posts/editcreate")
     public String editCreatePost(Model model) {
-        User user = userDao.getOne(1L);
+        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (obj == null || !(obj instanceof UserDetails)) {
+            return "redirect:/login";
+        }
+        User user = (User) obj;
         Post post = new Post();
         post.setUser(user);
         model.addAttribute("post", post);
@@ -68,7 +74,15 @@ public class PostController {
 
     @GetMapping("/posts/{id}/edit")
     public String showFormForEditingAPost(@PathVariable long id, Model model) {
+        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (obj == null || !(obj instanceof UserDetails)) {
+            return "redirect:/login";
+        }
+        User user = (User) obj;
         Post post = postDao.getOne(id);
+        if (post.getUser().getId() != user.getId()) {
+            return "redirect:/posts/" + post.getId();
+        }
         model.addAttribute("post", post);
         return "/posts/edit";
     }
