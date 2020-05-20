@@ -13,8 +13,8 @@
     <h2>View Post</h2>
     <br>
     <div th:unless="${post == null}">
-        <span style="font-weight: bold" th:text="${post.getTitle()}"></span><br>
-        <span style="padding-left: 2rem;" th:text="${post.getBody()}"></span><br>
+        <span style="font-weight: bold" th:text="${post.title}"></span><br>
+        <span style="padding-left: 2rem;" th:text="${post.body}"></span><br>
         <br>
         <span>Contact the author: </span>
         <a th:href="'mailto:' + ${post.user.email}"><span th:text="${post.user.email}"></span></a>

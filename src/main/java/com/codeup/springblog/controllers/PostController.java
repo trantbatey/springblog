@@ -111,7 +111,6 @@ public class PostController {
 
     @PostMapping("/posts/{id}/delete")
     public String deleteAd(@PathVariable long id, Model model) {
-        System.out.println(id);
         postDao.deleteById(id);
         return "redirect:/posts";
     }
