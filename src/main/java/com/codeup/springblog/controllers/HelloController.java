@@ -6,6 +6,12 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 class HelloController {
 
+    @GetMapping("/")
+    @ResponseBody
+    public String showLandingPage() {
+        return "<br><h1 style=\"text-align: center\">This is the landing page!</h1>";
+    }
+
     @GetMapping("/hello")
     @ResponseBody
     public String hello() {
