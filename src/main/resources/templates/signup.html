@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Join</title>
+    <title>Sign Up</title>
     <link th:replace="partials/links :: linkpage"/>
 </head>
 <body>
@@ -10,16 +10,9 @@
 <div th:replace="partials/navbar :: standard_nav"></div>
 
 <div class="container">
-    <h1 th:text="${cohort}"></h1>
-
-    <form action="/join" method="post">
-        <label for="cohort-ip">Cohort</label>
-        <input type="text" name="cohort" id="cohort-ip" class="field"/>
-        <button>Join now</button>
-    </form>
+    <h1>The Sign Up page is not implemented yet.</h1>
 </div>
+
 <div th:replace="partials/footer_nav :: footer_nav"></div>
 <div th:replace="partials/scripts :: scriptpage"></div>
-
 </body>
-</html>

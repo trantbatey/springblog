@@ -1,6 +1,19 @@
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="partials/partials :: head"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <link th:replace="partials/links :: linkpage"/>
+</head>
 <body>
+<div th:replace="partials/top_banner :: top_banner"></div>
+<div th:replace="partials/navbar :: standard_nav"></div>
 <nav th:replace="partials/partials :: navbar"/>
+
+<div class="container">
     <h1>Welcome To My Site!</h1>
+</div>
+
+<div th:replace="partials/footer_nav :: footer_nav"></div>
+<div th:replace="partials/scripts :: scriptpage"></div>
 </body>
