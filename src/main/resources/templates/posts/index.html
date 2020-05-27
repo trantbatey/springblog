@@ -12,13 +12,10 @@
 <div class="container">
     <h2>Recent Blog Post</h2>
     <br>
-    <table>
         <div th:each="post : ${posts}">
-            <tr><td style="font-weight: bold" th:text="${post.title}"></td></tr>
-            <tr><td style="padding-left: 2rem;" th:text="${post.getBody()}"></td></tr>
-            <tr><td><br></td></tr>
+            <h2 style="font-weight: bold" th:text="${post.title}"></h2>
+            <p style="padding-left: 2rem;" th:text="${post.getBody()}"></p>
         </div>
-    </table>
 </div>
 <div th:replace="partials/footer_nav :: footer_nav"></div>
 <div th:replace="partials/scripts :: scriptpage"></div>
