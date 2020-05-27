@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Post</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+</head>
+<body>
+<div th:replace="partials/top_banner :: top_banner"></div>
+<div th:replace="partials/navbar :: standard_nav"></div>
+
+<div class="container">
+    <h2>View Ad</h2>
+    <br>
+    <span style="font-weight: bold" th:text="${ad.title}"></span><br>
+    <span style="padding-left: 2rem;" th:text="${ad.description}"></span>
+</div>
+
+<div th:replace="partials/footer_nav :: footer_nav"></div>
+<script src="/js/jquery-3.4.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>
