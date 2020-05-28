@@ -1,8 +1,7 @@
-<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Post List</title>
+    <title>Post</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/css/style.css"/>
 </head>
@@ -10,20 +9,20 @@
 <div th:replace="partials/top_banner :: top_banner"></div>
 <div th:replace="partials/navbar :: standard_nav"></div>
 
+
+
 <div class="container">
-    <div th:unless="${message == null}">
-        <br>
-        <h2>ERROR: <span style="color: red" th:text="${message}">message</span></h2>
-        <br>
-    </div>
+    <h2>Edit Ad</h2>
 
-
-    <h2>Recent Blog Post</h2>
-    <br>
-    <div th:each="ad : ${ads}">
-        <h3 style="font-weight: bold" th:text="${ad.title}"></h3>
-        <p style="padding-left: 2rem;" th:text="${ad.description}"></p>
-    </div>
+    <form action="/ads/edit" method="post">
+        <input type="hidden" name="id" th:value="${ad.id}"/>
+        <label for="title">Ad Title: </label>
+        <input type="text" name="title" id="title" th:value="${ad.title}" class="field"/>
+        <br><br>
+        <label for="description">Description:</label><br>
+        <textarea name="description" id="description"  th:text="${ad.description}" class="field" rows="4" cols="50"></textarea><br>
+        <button>Save</button>
+    </form>
 </div>
 
 <div th:replace="partials/footer_nav :: footer_nav"></div>
