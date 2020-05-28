@@ -10,6 +10,13 @@
 <div th:replace="partials/navbar :: standard_nav"></div>
 
 <div class="container">
+
+    <div th:unless="${message == null}">
+        <br>
+        <h2>ERROR: <span style="color: red" th:text="${message}">message</span></h2>
+        <br>
+    </div>
+
     <h2>Recent Blog Post</h2>
     <br>
         <div th:each="post : ${posts}">

@@ -25,13 +25,14 @@ public class PostController {
     }
 
     @GetMapping("/posts/{id}")
-    public String showAnIndividualPost(@PathVariable int id, Model model) {
-        List<Post> postList = new ArrayList<>();
-        Post aPost = new Post();
-        aPost.setTitle("Texas plans reopening");
-        aPost.setBody("Texas Governor Greg Abbott speaks to the press in Austin on March 29, 2020. On Monday, Abbott " +
-                "outline the second phase of reopening businesses in Texas.");
-        model.addAttribute("post", aPost);
+    public String showAnIndividualPost(@PathVariable long id, Model model) {
+        if (postDao.findById(id).isEmpty()) {
+            model.addAttribute("posts", postDao.findAll());
+            model.addAttribute("message", "Post ID# " + id + " Not Found");
+            return "posts/index";
+        }
+        Post post = postDao.getOne(id);
+        model.addAttribute("post", post);
         return "posts/show";
     }
 
@@ -50,5 +51,37 @@ public class PostController {
             postDao.save(aPost);
         }
         return new RedirectView("/posts");
+    }
+
+    @GetMapping("/posts/edit/{id}")
+    public String getEditPost(@PathVariable long id, Model model) {
+        if (postDao.findById(id).isEmpty()) {
+            model.addAttribute("posts", postDao.findAll());
+            model.addAttribute("message", "Post ID# " + id + " Not Found");
+            return "posts/index";
+        }
+        Post post = postDao.getOne(id);
+        model.addAttribute("post", post);
+        return "posts/edit";
+    }
+
+    @PostMapping("/posts/edit")
+    public String postEditPost(@RequestParam(name = "id") long id,
+                             @RequestParam(name = "title") String title,
+                             @RequestParam(name = "body") String body, Model model) {
+        Post post = new Post();
+        if (title != null && body != null) {
+            post.setId(id);
+            post.setTitle(title);
+            post.setBody(body);
+            postDao.save(post);
+        }
+        return "redirect:/posts/" + post.getId();
+    }
+
+    @GetMapping("/posts/delete/{id}")
+    public String deletePost(@PathVariable long id, Model model) {
+        postDao.deleteById(id);
+        return "redirect:/posts";
     }
 }
