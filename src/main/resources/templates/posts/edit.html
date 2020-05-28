@@ -1,0 +1,32 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Post</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+</head>
+<body>
+<div th:replace="partials/top_banner :: top_banner"></div>
+<div th:replace="partials/navbar :: standard_nav"></div>
+
+
+
+<div class="container">
+    <h2>Edit Post</h2>
+
+    <form action="/posts/edit" method="post">
+        <input type="hidden" name="id" th:value="${post.id}"/>
+        <label for="title">Post Title: </label>
+        <input type="text" name="title" id="title" th:value="${post.title}" class="field"/>
+        <br><br>
+        <label for="body">Body:</label><br>
+        <textarea name="body" id="body"  th:text="${post.body}" class="field" rows="4" cols="50"></textarea><br>
+        <button>Save</button>
+    </form>
+</div>
+
+<div th:replace="partials/footer_nav :: footer_nav"></div>
+<script src="/js/jquery-3.4.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>
