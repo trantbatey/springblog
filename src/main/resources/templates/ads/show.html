@@ -11,6 +11,7 @@
     <h2>Ad</h2>
     <p style="font-weight: bold;" th:text="${ad.title}"></p>
     <p style="padding-left: 2rem;" th:text="${ad.description}"></p>
+    <a style="padding-left: 2rem;" th:href="'mailto:' + ${ad.owner.email}"><span th:text="${ad.owner.email}"></span></a>
 </div>
 
 <div th:replace="partials/partials :: footer"/>

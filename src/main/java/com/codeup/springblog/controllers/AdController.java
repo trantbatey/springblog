@@ -1,18 +1,17 @@
 package com.codeup.springblog.controllers;
 
+
 import com.codeup.springblog.models.Ad;
 import com.codeup.springblog.models.AdRepository;
 import com.codeup.springblog.models.User;
 import com.codeup.springblog.models.UserRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class AdController {
@@ -26,9 +25,21 @@ public class AdController {
     }
 
     @GetMapping("/ads")
-    public String index(Model model) {
+    public String showAds(Model model) {
         model.addAttribute("ads", adDao.findAll());
         return "ads/index";
+    }
+
+    @GetMapping("/ads/{id}")
+    public String showAd(@PathVariable long id, Model model) {
+        if (adDao.findById(id).isEmpty()) {
+            model.addAttribute("ads", adDao.findAll());
+            model.addAttribute("message", "Ad ID# " + id + " Not Found");
+            return "ads/index";
+        }
+        Ad ad = adDao.getOne(id);
+        model.addAttribute("ad", ad);
+        return "ads/show";
     }
 
     @GetMapping("/ads/create")
@@ -42,8 +53,42 @@ public class AdController {
     }
 
     @PostMapping("/ads/create")
-    public RedirectView create(@ModelAttribute Ad ad) {
+    public String postCreateAd(@ModelAttribute Ad ad) {
         adDao.save(ad);
-        return new RedirectView("/ads");
+        return "redirect:/ads/" + ad.getId();
+    }
+
+    @GetMapping("/ads/edit/{id}")
+    public String getEditAd(@PathVariable long id, Model model) {
+        if (adDao.findById(id).isEmpty()) {
+            model.addAttribute("ads", adDao.findAll());
+            model.addAttribute("message", "Ad ID# " + id + " Not Found");
+            return "ads/index";
+        }
+        Ad ad = adDao.getOne(id);
+        model.addAttribute("ad", ad);
+        return "ads/edit";
+    }
+
+    @PostMapping("/ads/edit")
+    public String postEditAd(@RequestParam(name = "id") long id,
+                             @RequestParam(name = "title") String title,
+                             @RequestParam(name = "description") String description, Model model) {
+        Ad ad = new Ad();
+        User user = userDao.getOne(1l);
+        if (title != null && description != null) {
+            ad.setId(id);
+            ad.setTitle(title);
+            ad.setDescription(description);
+            ad.setOwner(user);
+            adDao.save(ad);
+        }
+        return "redirect:/ads/" + ad.getId();
+    }
+
+    @GetMapping("/ads/delete/{id}")
+    public String deleteAd(@PathVariable long id, Model model) {
+        adDao.deleteById(id);
+        return "redirect:/ads";
     }
 }

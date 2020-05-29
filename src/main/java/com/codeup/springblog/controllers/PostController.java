@@ -27,10 +27,13 @@ public class PostController {
 
     @GetMapping("/posts/{id}")
     public String showAnIndividualPost(@PathVariable long id, Model model) {
-        Post post = postDao.getOne(id);
-        String errorMessage = "There is no post for ID# " + id + ".";
-        model.addAttribute("post", post);
-        model.addAttribute("errMesg", errorMessage);
+        if (postDao.findById(id).isEmpty()) {
+            String errorMessage = "There is no post for ID# " + id + ".";
+            model.addAttribute("errMesg", errorMessage);
+        } else {
+            Post post = postDao.getOne(id);
+            model.addAttribute("post", post);
+        }
         return "posts/show";
     }
 
@@ -51,5 +54,39 @@ public class PostController {
             postDao.save(post);
         }
         return new RedirectView("/posts");
+    }
+
+    @GetMapping("/posts/edit/{id}")
+    public String getEditPost(@PathVariable long id, Model model) {
+        if (postDao.findById(id).isEmpty()) {
+            model.addAttribute("posts", postDao.findAll());
+            model.addAttribute("message", "Post ID# " + id + " Not Found");
+            return "posts/index";
+        }
+        Post post = postDao.getOne(id);
+        model.addAttribute("post", post);
+        return "posts/edit";
+    }
+
+    @PostMapping("/posts/edit")
+    public String postEditPost(@RequestParam(name = "id") long id,
+                               @RequestParam(name = "title") String title,
+                               @RequestParam(name = "body") String body, Model model) {
+        Post post = new Post();
+        if (title != null && body != null) {
+            post.setId(id);
+            post.setTitle(title);
+            post.setBody(body);
+            User user = userDao.getOne(1l);
+            post.setUser(user);
+            postDao.save(post);
+        }
+        return "redirect:/posts/" + post.getId();
+    }
+
+    @GetMapping("/posts/delete/{id}")
+    public String deletePost(@PathVariable long id, Model model) {
+        postDao.deleteById(id);
+        return "redirect:/posts";
     }
 }

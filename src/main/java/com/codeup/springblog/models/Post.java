@@ -20,6 +20,14 @@ public class Post {
     @JoinColumn (name = "user_id", nullable = false)
     private User user;
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
