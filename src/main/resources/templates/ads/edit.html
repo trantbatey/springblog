@@ -15,6 +15,7 @@
     <h2>Edit Ad</h2>
 
     <form th:action="@{/ads/edit}" th:method="post" th:object="${ad}">
+        <input type="hidden" th:field="*{id}" class="field"/>
         <input type="hidden" th:field="*{owner}" class="field"/>
         <label for="title">Ad Title: </label>
         <input type="text" th:field="*{title}" id="title" class="field"/>

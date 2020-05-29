@@ -61,7 +61,7 @@ public class AdController {
         emailService.prepareAndSend(ad, "CREATED Ad: " + ad.getTitle(),
                 ad.getTitle() +"\n\n" +
                         ad.getDescription());
-        return "redirect:/ads";
+        return "redirect:/ads/" + ad.getId();
     }
 
     @GetMapping("/ads/edit/{id}")
