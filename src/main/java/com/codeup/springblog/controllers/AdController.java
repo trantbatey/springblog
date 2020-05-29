@@ -71,18 +71,8 @@ public class AdController {
     }
 
     @PostMapping("/ads/edit")
-    public String postEditAd(@RequestParam(name = "id") long id,
-                             @RequestParam(name = "title") String title,
-                             @RequestParam(name = "description") String description, Model model) {
-        Ad ad = new Ad();
-        User user = userDao.getOne(1l);
-        if (title != null && description != null) {
-            ad.setId(id);
-            ad.setTitle(title);
-            ad.setDescription(description);
-            ad.setOwner(user);
-            adDao.save(ad);
-        }
+    public String postEditAd(@ModelAttribute Ad ad) {
+        adDao.save(ad);
         return "redirect:/ads/" + ad.getId();
     }
 

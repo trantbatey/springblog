@@ -43,7 +43,7 @@ public class PostController {
     }
 
     @PostMapping("/posts/create")
-    public RedirectView createAPost(@RequestParam(name = "title") String title,
+    public String createAPost(@RequestParam(name = "title") String title,
                               @RequestParam(name = "body") String body, Model model) {
         Post post = new Post();
         if (title != null && body != null) {
@@ -53,7 +53,7 @@ public class PostController {
             post.setUser(user);
             postDao.save(post);
         }
-        return new RedirectView("/posts");
+        return "redirect:/posts/" + post.getId();
     }
 
     @GetMapping("/posts/edit/{id}")

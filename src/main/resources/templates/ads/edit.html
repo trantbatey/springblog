@@ -14,13 +14,13 @@
 <div class="container">
     <h2>Edit Ad</h2>
 
-    <form action="/ads/edit" method="post">
-        <input type="hidden" name="id" th:value="${ad.id}"/>
+    <form th:action="@{/ads/edit}" th:method="post" th:object="${ad}">
+        <input type="hidden" th:field="*{owner}" class="field"/>
         <label for="title">Ad Title: </label>
-        <input type="text" name="title" id="title" th:value="${ad.title}" class="field"/>
+        <input type="text" th:field="*{title}" id="title" class="field"/>
         <br><br>
-        <label for="description">Description:</label><br>
-        <textarea name="description" id="description"  th:text="${ad.description}" class="field" rows="4" cols="50"></textarea><br>
+        <label for="desc">Description:</label><br>
+        <textarea th:field="*{description}" id="desc" class="field" rows="4" cols="50"></textarea><br>
         <button>Save</button>
     </form>
 </div>
