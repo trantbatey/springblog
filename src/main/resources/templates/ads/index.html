@@ -10,9 +10,18 @@
 <div th:replace="partials/navbar :: standard_nav"></div>
 
 <div class="container">
+
+    <div th:unless="${message == null}">
+        <br>
+        <h2>ERROR: <span style="color: red" th:text="${message}">message</span></h2>
+        <br>
+    </div>
+
+
     <h2>Ad List</h2>
+    <br>
     <div th:each="ad : ${ads}">
-        <p style="font-weight: bold;" th:text="${ad.title}"></p>
+        <h3 style="font-weight: bold" th:text="${ad.title}"></h3>
         <p style="padding-left: 2rem;" th:text="${ad.description}"></p>
     </div>
 </div>
