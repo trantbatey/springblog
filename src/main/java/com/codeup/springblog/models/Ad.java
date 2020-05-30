@@ -1,11 +1,13 @@
 package com.codeup.springblog.models;
 
+import com.codeup.springblog.services.Notifier;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name="ads")
-public class Ad {
+public class Ad implements Notifier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,4 +88,8 @@ public class Ad {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public User getUser() {return getOwner();}
+
+    public void setUser(User user) { setOwner(user);}
 }

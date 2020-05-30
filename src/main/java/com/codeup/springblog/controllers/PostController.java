@@ -1,9 +1,6 @@
 package com.codeup.springblog.controllers;
 
-import com.codeup.springblog.models.Post;
-import com.codeup.springblog.models.PostRepository;
-import com.codeup.springblog.models.User;
-import com.codeup.springblog.models.UserRepository;
+import com.codeup.springblog.models.*;
 import com.codeup.springblog.services.EmailService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,7 +63,7 @@ public class PostController {
         return new RedirectView("/posts/" + post.getId());
     }
 
-    @GetMapping("/posts/{id}/edit")
+    @GetMapping("/posts/edit/{id}")
     public String showFormForEditingAPost(@PathVariable long id, Model model) {
         Post post = postDao.getOne(id);
         model.addAttribute("post", post);
@@ -80,5 +77,15 @@ public class PostController {
                 post.getTitle() +"\n\n" +
                         post.getBody());
         return new RedirectView("/posts/" + post.getId());
+    }
+
+    @GetMapping("/posts/delete/{id}")
+    public String deleteAd(@PathVariable long id, Model model) {
+        Post post = postDao.getOne(id);
+        postDao.deleteById(id);
+        emailService.prepareAndSend(post, "Deleted Psot: " + post.getTitle(),
+                post.getTitle() +"\n\n" +
+                        post.getBody());
+        return "redirect:/posts";
     }
 }
