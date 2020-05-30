@@ -12,7 +12,9 @@
 <div class="container">
     <h2>Edit Post</h2>
 
-    <form th:action="@{/posts/${id}/edit}" th:method="post" th:object="${post}">
+    <form th:action="@{/posts/edit}" th:method="post" th:object="${post}">
+        <input type="hidden" th:field="*{id}" class="field"/>
+        <input type="hidden" th:field="*{user}" class="field"/>
         <label for="title">Post Title: </label>
         <input type="text" th:field="*{title}" id="title" class="field"/>
         <br><br>

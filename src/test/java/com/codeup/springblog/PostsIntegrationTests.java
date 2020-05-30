@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.http.HttpSession;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class PostsIntegrationTests {
 
-    private User testUser;
     private HttpSession httpSession;
 
     @Autowired
@@ -44,7 +45,7 @@ public class PostsIntegrationTests {
     @Before
     public void setup() throws Exception {
 
-        testUser = userDao.findByUsername("testUser");
+        User testUser = userDao.findByUsername("testUser");
 
         // Creates the test user if not exists
         if(testUser == null){
@@ -52,7 +53,7 @@ public class PostsIntegrationTests {
             newUser.setUsername("testUser");
             newUser.setPassword(passwordEncoder.encode("pass"));
             newUser.setEmail("testUser@codeup.com");
-            testUser = userDao.save(newUser);
+            userDao.save(newUser);
         }
 
         // Throws a Post request to /login and expect a redirection to the Posts index page after being logged in
@@ -107,13 +108,13 @@ public class PostsIntegrationTests {
     public void testEditPost() throws Exception {
         // Gets the first Post for tests purposes
         Post existingPost = postsDao.findAll().get(0);
+        existingPost.setTitle("edited title");
+        existingPost.setBody("edited body");
 
-        // Makes a Post request to /posts/{id}/edit and expect a redirection to the Post show page
-        this.mvc.perform(
-                post("/posts/" + existingPost.getId() + "/edit").with(csrf())
+        // Makes a Post request to /posts/edit and expect a redirection to the Post show page
+        this.mvc.perform(post("/posts/edit").with(csrf())
                         .session((MockHttpSession) httpSession)
-                        .param("title", "edited title")
-                        .param("body", "edited body"))
+                        .flashAttr("post", existingPost))
                 .andExpect(status().is3xxRedirection());
 
         // Makes a GET request to /posts/{id} and expect a redirection to the Post show page
@@ -126,6 +127,13 @@ public class PostsIntegrationTests {
 
     @Test
     public void testDeletePost() throws Exception {
+
+        // Remove data from previously failed test
+        List<Post> posts = postsDao.findAllByTitle("Post to be deleted");
+        for (Post post: posts) {
+            postsDao.deleteById(post.getId());
+        }
+
         // Creates a test Post to be deleted
         this.mvc.perform(
                 post("/posts/create").with(csrf())
@@ -137,9 +145,8 @@ public class PostsIntegrationTests {
         // Get the recent Post that matches the title
         Post existingPost = postsDao.findByTitle("Post to be deleted");
 
-        // Makes a Post request to /posts/{id}/delete and expect a redirection to the Posts index
-        this.mvc.perform(
-                post("/posts/" + existingPost.getId() + "/delete").with(csrf())
+        // Makes a Post request to /posts/delete/{id} and expect a redirection to the Posts index
+        this.mvc.perform(get("/posts/delete/" + existingPost.getId()).with(csrf())
                         .session((MockHttpSession) httpSession))
                 .andExpect(status().is3xxRedirection());
     }

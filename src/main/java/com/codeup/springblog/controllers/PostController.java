@@ -1,5 +1,6 @@
 package com.codeup.springblog.controllers;
 
+import com.codeup.springblog.models.Ad;
 import com.codeup.springblog.models.Post;
 import com.codeup.springblog.models.PostRepository;
 import com.codeup.springblog.models.User;
@@ -9,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class PostController {
@@ -30,10 +30,13 @@ public class PostController {
 
     @GetMapping("/posts/{id}")
     public String showAnIndividualPost(@PathVariable long id, Model model) {
+        if (postDao.findById(id).isEmpty()) {
+            model.addAttribute("posts", postDao.findAll());
+            model.addAttribute("message", "There is no post for ID# " + id + ".");
+            return "posts/index";
+        }
         Post post = postDao.getOne(id);
-        String errorMessage = "There is no post for ID# " + id + ".";
         model.addAttribute("post", post);
-        model.addAttribute("errMesg", errorMessage);
         return "posts/show";
     }
 
@@ -52,13 +55,7 @@ public class PostController {
 
     @GetMapping("/posts/editcreate")
     public String editCreatePost(Model model) {
-        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (obj == null || !(obj instanceof UserDetails)) {
-            return "redirect:/login";
-        }
-        User user = (User) obj;
         Post post = new Post();
-        post.setUser(user);
         model.addAttribute("post", post);
         return "/posts/edit";
     }
@@ -93,15 +90,8 @@ public class PostController {
         return "/posts/edit";
     }
 
-    @PostMapping("/posts/{id}/edit")
-    public String editAPost(@PathVariable long id, @ModelAttribute Post post) {
-        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (obj == null || !(obj instanceof UserDetails)) {
-            return "redirect:/login";
-        }
-        User user = (User) obj;
-        post.setId(id);
-        post.setUser(user);
+    @PostMapping("/posts/edit")
+    public String editAPost(@ModelAttribute Post post) {
         postDao.save(post);
         emailService.prepareAndSend(post, "EDITED post: " + post.getTitle(),
                 post.getTitle() +"\n\n" +
@@ -109,19 +99,15 @@ public class PostController {
         return "redirect:/posts/" + post.getId();
     }
 
-    @PostMapping("/posts/{id}/delete")
-    public String deleteAd(@PathVariable long id, Model model) {
-        postDao.deleteById(id);
-        return "redirect:/posts";
-    }
-
     @GetMapping("/posts/delete/{id}")
-    public String deleteAd(@PathVariable long id, Model model) {
-        Post post = postDao.getOne(id);
-        postDao.deleteById(id);
-        emailService.prepareAndSend(post, "Deleted Psot: " + post.getTitle(),
-                post.getTitle() +"\n\n" +
-                        post.getBody());
+    public String deletePost(@PathVariable long id, Model model) {
+        if (postDao.findById(id).isPresent()) {
+            Post post = postDao.getOne(id);
+            postDao.deleteById(id);
+            emailService.prepareAndSend(post, "Deleted Post: " + post.getTitle(),
+                    post.getTitle() +"\n\n" +
+                            post.getBody());
+        }
         return "redirect:/posts";
     }
 }
