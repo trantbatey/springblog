@@ -5,13 +5,11 @@ import com.codeup.springblog.models.AdRepository;
 import com.codeup.springblog.models.User;
 import com.codeup.springblog.models.UserRepository;
 import com.codeup.springblog.services.EmailService;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class AdController {
@@ -47,9 +45,12 @@ public class AdController {
 
     @GetMapping("/ads/create")
     public String showCreateForm(Model model) {
-        // set user, usually done by using session
+        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (obj == null || !(obj instanceof UserDetails)) {
+            return "redirect:/login";
+        }
+        User user = (User) obj;
         Ad ad = new Ad();
-        User user = userDao.getOne(1L);
         ad.setOwner(user);
         model.addAttribute("ad", ad);
         return "ads/create";
