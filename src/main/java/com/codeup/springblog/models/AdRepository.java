@@ -9,6 +9,10 @@ import java.util.List;
 public interface AdRepository extends JpaRepository<Ad, Long> {
     Ad findByTitle(String title);
 
+    // find all ads with the specified title
+    @Query("from Ad a where a.title = :term")
+    List<Ad> findAllByTitle(@Param("term") String term);
+
     // The following method is equivalent to the built in `getOne` method, there's no need to create this example
     @Query("from Ad a where a.id = ?1")
     Ad getAdById(long id);

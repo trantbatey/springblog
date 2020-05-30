@@ -78,7 +78,7 @@ public class PostController {
         return "redirect:/posts/" + post.getId();
     }
 
-    @GetMapping("/posts/{id}/edit")
+    @GetMapping("/posts/edit/{id}")
     public String showFormForEditingAPost(@PathVariable long id, Model model) {
         Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (obj == null || !(obj instanceof UserDetails)) {
@@ -112,6 +112,16 @@ public class PostController {
     @PostMapping("/posts/{id}/delete")
     public String deleteAd(@PathVariable long id, Model model) {
         postDao.deleteById(id);
+        return "redirect:/posts";
+    }
+
+    @GetMapping("/posts/delete/{id}")
+    public String deleteAd(@PathVariable long id, Model model) {
+        Post post = postDao.getOne(id);
+        postDao.deleteById(id);
+        emailService.prepareAndSend(post, "Deleted Psot: " + post.getTitle(),
+                post.getTitle() +"\n\n" +
+                        post.getBody());
         return "redirect:/posts";
     }
 }
