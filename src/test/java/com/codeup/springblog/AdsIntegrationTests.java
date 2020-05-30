@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.http.HttpSession;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class AdsIntegrationTests {
 
-    private User testUser;
     private HttpSession httpSession;
 
     @Autowired
@@ -47,7 +48,7 @@ public class AdsIntegrationTests {
     @Before
     public void setup() throws Exception {
 
-        testUser = userDao.findByUsername("testUser");
+        User testUser = userDao.findByUsername("testUser");
 
         // Creates the test user if not exists
         if(testUser == null){
@@ -55,7 +56,7 @@ public class AdsIntegrationTests {
             newUser.setUsername("testUser");
             newUser.setPassword(passwordEncoder.encode("pass"));
             newUser.setEmail("testUser@codeup.com");
-            testUser = userDao.save(newUser);
+            userDao.save(newUser);
         }
 
         // Throws a Post request to /login and expect a redirection to the Ads index page after being logged in
@@ -110,13 +111,14 @@ public class AdsIntegrationTests {
     public void testEditAd() throws Exception {
         // Gets the first Ad for tests purposes
         Ad existingAd = adsDao.findAll().get(0);
+        existingAd.setTitle("edited title");
+        existingAd.setDescription("edited description");
 
         // Makes a Post request to /ads/{id}/edit and expect a redirection to the Ad show page
         this.mvc.perform(
-                post("/ads/" + existingAd.getId() + "/edit").with(csrf())
+                post("/ads/edit/").with(csrf())
                         .session((MockHttpSession) httpSession)
-                        .param("title", "edited title")
-                        .param("description", "edited description"))
+                        .flashAttr("ad", existingAd))
                 .andExpect(status().is3xxRedirection());
 
         // Makes a GET request to /ads/{id} and expect a redirection to the Ad show page
@@ -129,20 +131,29 @@ public class AdsIntegrationTests {
 
     @Test
     public void testDeleteAd() throws Exception {
+
+        // Remove data from previously failed test
+        List<Ad> ads = adsDao.findAllByTitle("ad to be deleted");
+        for (Ad ad: ads) {
+            adsDao.deleteById(ad.getId());
+        }
+
         // Creates a test Ad to be deleted
+        Ad ad = new Ad();
+        ad.setTitle("ad to be deleted");
+        ad.setDescription("won't last long");
         this.mvc.perform(
                 post("/ads/create").with(csrf())
                         .session((MockHttpSession) httpSession)
-                        .param("title", "ad to be deleted")
-                        .param("description", "won't last long"))
+                        .flashAttr("ad", ad))
                 .andExpect(status().is3xxRedirection());
 
         // Get the recent Ad that matches the title
         Ad existingAd = adsDao.findByTitle("ad to be deleted");
 
-        // Makes a Post request to /ads/{id}/delete and expect a redirection to the Ads index
+        // Makes a Post request to /ads/delete/{id} and expect a redirection to the Ads index
         this.mvc.perform(
-                post("/ads/" + existingAd.getId() + "/delete").with(csrf())
+                get("/ads/delete/" + existingAd.getId()).with(csrf())
                         .session((MockHttpSession) httpSession))
                 .andExpect(status().is3xxRedirection());
     }

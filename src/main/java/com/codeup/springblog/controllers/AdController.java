@@ -45,19 +45,19 @@ public class AdController {
 
     @GetMapping("/ads/create")
     public String showCreateForm(Model model) {
-        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (obj == null || !(obj instanceof UserDetails)) {
-            return "redirect:/login";
-        }
-        User user = (User) obj;
         Ad ad = new Ad();
-        ad.setOwner(user);
         model.addAttribute("ad", ad);
         return "ads/create";
     }
 
     @PostMapping("/ads/create")
     public String create(@ModelAttribute Ad ad) {
+        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (obj == null || !(obj instanceof UserDetails)) {
+            return "redirect:/login";
+        }
+        User user = (User) obj;
+        ad.setOwner(user);
         adDao.save(ad);
         emailService.prepareAndSend(ad, "CREATED Ad: " + ad.getTitle(),
                 ad.getTitle() +"\n\n" +
