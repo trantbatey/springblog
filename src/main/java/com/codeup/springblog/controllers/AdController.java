@@ -9,10 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class AdController {
@@ -29,41 +26,59 @@ public class AdController {
     }
 
     @GetMapping("/ads")
-    public String index(Model model) {
+    public String showAds(Model model) {
         model.addAttribute("ads", adDao.findAll());
         return "ads/index";
     }
 
     @GetMapping("/ads/{id}")
     public String showAd(@PathVariable long id, Model model) {
-        model.addAttribute("ad", adDao.getOne(id));
+        if (adDao.findById(id).isEmpty()) {
+            model.addAttribute("ads", adDao.findAll());
+            model.addAttribute("message", "Ad ID# " + id + " Not Found");
+            return "ads/index";
+        }
+        Ad ad = adDao.getOne(id);
+        model.addAttribute("ad", ad);
         return "ads/show";
     }
 
-    @GetMapping("/ads/{id}/edit")
-    public String editAdForm(@PathVariable long id, Model model) {
+    @GetMapping("/ads/create")
+    public String showCreateForm(Model model) {
         Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (obj == null || !(obj instanceof UserDetails)) {
             return "redirect:/login";
         }
         User user = (User) obj;
-        Ad ad = adDao.getOne(id);
-        if (ad.getUser().getId() != user.getId()) {
-            return "redirect:/ads/" + ad.getId();
-        }
+        Ad ad = new Ad();
+        ad.setOwner(user);
         model.addAttribute("ad", ad);
-        return "/ads/edit";
+        return "ads/create";
     }
 
-    @PostMapping("/ads/{id}/edit")
-    public String editAdWithId(@PathVariable long id, @ModelAttribute Ad ad) {
-        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (obj == null || !(obj instanceof UserDetails)) {
-            return "redirect:/login";
+    @PostMapping("/ads/create")
+    public String create(@ModelAttribute Ad ad) {
+        adDao.save(ad);
+        emailService.prepareAndSend(ad, "CREATED Ad: " + ad.getTitle(),
+                ad.getTitle() +"\n\n" +
+                        ad.getDescription());
+        return "redirect:/ads/" + ad.getId();
+    }
+
+    @GetMapping("/ads/edit/{id}")
+    public String getEditAd(@PathVariable long id, Model model) {
+        if (adDao.findById(id).isEmpty()) {
+            model.addAttribute("ads", adDao.findAll());
+            model.addAttribute("message", "Ad ID# " + id + " Not Found");
+            return "ads/index";
         }
-        User user = (User) obj;
-        ad.setId(id);
-        ad.setUser(user);
+        Ad ad = adDao.getOne(id);
+        model.addAttribute("ad", ad);
+        return "ads/edit";
+    }
+
+    @PostMapping("/ads/edit")
+    public String postEditAd(@ModelAttribute Ad ad) {
         adDao.save(ad);
         emailService.prepareAndSend(ad, "EDITED Ad: " + ad.getTitle(),
                 ad.getTitle() +"\n\n" +
@@ -71,39 +86,13 @@ public class AdController {
         return "redirect:/ads/" + ad.getId();
     }
 
-    @GetMapping("/ads/create")
-    public String showCreateForm(Model model) {
-        // set user, usually done by using session
-        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (obj == null || !(obj instanceof UserDetails)) {
-            return "redirect:/login";
-        }
-        User user = (User) obj;
-        Ad ad = new Ad();
-        ad.setUser(user);
-        model.addAttribute("ad", ad);
-        return "ads/create";
-    }
-
-    @PostMapping("/ads/create")
-    public String create(@ModelAttribute Ad ad) {
-        Object obj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (obj == null || !(obj instanceof UserDetails)) {
-            return "redirect:/login";
-        }
-        User user = (User) obj;
-        ad.setUser(user);
-        adDao.save(ad);
-        emailService.prepareAndSend(ad, "CREATED Ad: " + ad.getTitle(),
+    @GetMapping("/ads/delete/{id}")
+    public String deleteAd(@PathVariable long id, Model model) {
+        Ad ad = adDao.getOne(id);
+        adDao.deleteById(id);
+        emailService.prepareAndSend(ad, "Deleted Ad: " + ad.getTitle(),
                 ad.getTitle() +"\n\n" +
                         ad.getDescription());
-        return "redirect:/ads";
-    }
-
-    @PostMapping("/ads/{id}/delete")
-    public String deleteAd(@PathVariable long id, Model model) {
-        System.out.println(id);
-        adDao.deleteById(id);
         return "redirect:/ads";
     }
 }

@@ -16,11 +16,11 @@ public class Ad implements Notifier {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false, length = 2000)
     private String description;
 
     @OneToOne
-    private User user;
+    private User owner;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ad")
     private List<AdImage> images;
@@ -47,6 +47,14 @@ public class Ad implements Notifier {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public List<AdImage> getImages() {
@@ -81,11 +89,7 @@ public class Ad implements Notifier {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
-    }
+    public User getUser() {return getOwner();}
 
-    public void setUser(User owner) {
-        this.user = owner;
-    }
+    public void setUser(User user) { setOwner(user);}
 }
