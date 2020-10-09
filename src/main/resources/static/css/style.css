@@ -5,6 +5,9 @@
     background-color: aqua;
     border-color: black;
     border-style: double;
+    position: fixed;
+    top: 0;
+    width: 100%
 }
 
 html {
@@ -12,12 +15,19 @@ html {
     min-height: 100%;
 }
 
+.topnav {
+    margin-bottom: .5em;
+    position: fixed;
+    top: 7.9em;
+    width: 100%
+}
+
 body {
-    margin: 0 0 100px;
+    padding-top: 12em;
 }
 
 .footer {
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 0;
     height: 35px;
